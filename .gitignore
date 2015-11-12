@@ -1,0 +1,6 @@
+#ignored
+*.out
+server
+client
+*.o
+*.swp
