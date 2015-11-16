@@ -49,7 +49,7 @@ void do_service(int conn)
 	while (1)
 	{
 		memset(&recvbuf, 0, sizeof(recvbuf));
-		int ret = read(conn, recvbuf.cmd_type, sizeof(recvbuf.cmd_type));
+		int ret = read(conn, &recvbuf, sizeof(recvbuf));
 		if (0==ret)
 		{
 			printf("client_closed\n");
@@ -67,7 +67,7 @@ void do_service(int conn)
 				break;
 
 			case READ_FILELIST:
-				printf( "read file list \n");
+				printf( "cmd type:read file list \n");
 				break;
 
 			case READ_FILE:
@@ -93,12 +93,12 @@ void do_service(int conn)
 				break;
 			}
 			//fputs("%s",recvbuf);
-		printf("%s", recvbuf.str);
-		write(conn, recvbuf, ret);
+		printf("%s\n\n", recvbuf.str);
+		write(conn, &recvbuf, ret);
 
 	}
 }
-//≤‚ ‘ byliu
+//???? byliu
 
 
 int main(void){
@@ -138,7 +138,7 @@ int main(void){
 	{
 		if ((conn = accept(listenfd, (struct sockaddr*)&peeraddr, &peerlen)) < 0)//peerlenÂøÖÈ°ªÂàùÂßãÂåñ
 			ERR_EXIT("accept");
-		printf("ip :%s,port = %d", inet_ntoa(peeraddr.sin_addr), ntohs(peeraddr.sin_port));
+		printf("ip :%s,port = %d\n", inet_ntoa(peeraddr.sin_addr), ntohs(peeraddr.sin_port));
 
 		/* */
 		pid = fork();//SO_REUSEADDR make it possible for  multi client connect to zhe server 
