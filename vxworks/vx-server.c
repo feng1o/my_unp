@@ -9,14 +9,14 @@
 #include"sys/types.h"
 #include"sys/socket.h"
 
-void do_service(int a)
+void do_service(int conn)
 {
 
 	char recvbuf[1024];
 	while (1)
 	{
 		memset(recvbuf, 0, sizeof(recvbuf));
-		int ret = read(a, recvbuf, sizeof(recvbuf));
+		int ret = read(conn, recvbuf, sizeof(recvbuf));
 		if (0==ret)//就是client关闭了
 		{
 			printf("client_closed\n");
@@ -24,7 +24,7 @@ void do_service(int a)
 		}
 		//fputs("%s",recvbuf);
 		printf("%s", recvbuf);
-		write(a, recvbuf, ret);
+		write(conn, recvbuf, ret);
 
 	}
 }
@@ -80,9 +80,9 @@ int main(void){
 		pid = fork();//SO_REUSEADDR make it possible for  multi client connect to zhe server 
 		if (-1 == pid)
 			ERR_EXIT("fork");
-		if (0 == pid) //pid 0就是表示自己？？？
+		if (0 == pid) //pid 0就是表示自己？？？  pid 0 is its self,sub thred
 		{
-			close(listenfd);//listen因为子进程不需要监听close listen,as sub thred need not listen;
+			close(listenfd);//listen因为子进程不需要监听/close listen,as sub thred need not listen;
 			do_service(conn);//z这里面他会发给对应的套接字  进程会在这里面循环
 			exit(EXIT_SUCCESS);//客户端关闭了，这个进程就销毁掉
 		}
@@ -92,4 +92,5 @@ int main(void){
 	}
 	return 0;
 }
+
 
