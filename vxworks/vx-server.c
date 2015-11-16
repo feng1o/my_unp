@@ -9,26 +9,7 @@
 #include"sys/types.h"
 #include"sys/socket.h"
 
-void do_service(int conn)
-{
 
-	char recvbuf[1024];
-	while (1)
-	{
-		memset(recvbuf, 0, sizeof(recvbuf));
-		int ret = read(conn, recvbuf, sizeof(recvbuf));
-		if (0==ret)//Â∞±ÊòØclientÂÖ≥Èó≠‰∫Ü
-		{
-			printf("client_closed\n");
-			break;//chunÊù•
-		}
-		//fputs("%s",recvbuf);
-		printf("%s", recvbuf);
-		write(conn, recvbuf, ret);
-
-	}
-}
-//≤‚ ‘ byliu
 #define ERR_EXIT(m) \ 
 do \
 { \
@@ -36,6 +17,89 @@ perror(m); \
 exit(EXIT_FAILURE); \
 }  \
 while (0)
+
+
+/* 
+define different types label
+*/ 
+#define  SAR_STATE          0
+#define  RF_PARAMETER_SET   1
+#define  READ_FILELIST      2
+#define  READ_FILE          3
+#define  DELETE_FILE        4
+#define  FORMAT_FILE        5
+#define  RF_PARAMETER_TEST  6
+
+/* 
+pack  send messages
+*/ 
+
+typedef struct messge_pack
+{
+	char cmd_type;
+	char str[20];
+	
+}messge_pack;
+
+void do_service(int conn)
+{
+
+	//char recvbuf[1024];
+	struct messge_pack recvbuf;
+	while (1)
+	{
+		memset(&recvbuf, 0, sizeof(recvbuf));
+		int ret = read(conn, recvbuf.cmd_type, sizeof(recvbuf.cmd_type));
+		if (0==ret)
+		{
+			printf("client_closed\n");
+			break;//chunÊù•
+		}
+
+		switch (recvbuf.cmd_type)
+			{ 
+			case SAR_STATE:
+				printf( "return state \n" );
+				break;
+
+			case RF_PARAMETER_SET:
+				printf( "set parmeter\n");
+				break;
+
+			case READ_FILELIST:
+				printf( "read file list \n");
+				break;
+
+			case READ_FILE:
+				printf( "read file\n");
+				break;
+				
+			case DELETE_FILE:
+				printf( "delete file\n");
+				break;
+
+			case FORMAT_FILE:
+				printf( "format file\n");
+				break;
+
+			case RF_PARAMETER_TEST:
+				printf( "RF_parameter_test\n");
+				break;
+
+
+
+
+			default:
+				break;
+			}
+			//fputs("%s",recvbuf);
+		printf("%s", recvbuf.str);
+		write(conn, recvbuf, ret);
+
+	}
+}
+//≤‚ ‘ byliu
+
 
 int main(void){
 	int listenfd;
