@@ -55,14 +55,14 @@ int main(void ){
 	if(connect(sock,(struct sockadd *)&servaddr,sizeof(servaddr))<0)
 		ERR_EXIT("connect");//链接失败
 	
-	char sendbuf[1024] = {0};
-	char recvbuf[1024] = {0};
+	//char sendbuf[1024] = {0};
+	//char recvbuf[1024] = {0};
 
 	//while(fgets(sendbuf	,sizeof(sendbuf),stdin)!=NULL){
 		   // printf("gets = %s",sendbuf);
-	struct messge_pack sendbuf;
-	sendbuf.cmd_type =  READ_FILELIST;
-	sendbuf.str = "read filelist";
+	struct messge_pack sendbuf={READ_FILELIST,"read flie list"};
+	//sendbuf.cmd_type =  READ_FILELIST;
+	//sendbuf.str = "read filelist";// ERROR  cannot asignmet a data array like this; just can initailize when define a variable
 	write(sock,sendbuf	,sizeof(sendbuf));
             printf("send is= %s",sendbuf.str);
 	printf("type cmd is= %d",sendbuf.cmd_type);
