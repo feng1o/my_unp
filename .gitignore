@@ -4,7 +4,7 @@ server
 client
 *.o
 *.swp
-my-unp.CF3
+*.CF3
 my-unp.IAB
 my-unp.IAD
 my-unp.IMB
