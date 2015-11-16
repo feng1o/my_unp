@@ -63,14 +63,14 @@ int main(void ){
 	struct messge_pack sendbuf={READ_FILELIST,"read flie list"};
 	//sendbuf.cmd_type =  READ_FILELIST;
 	//sendbuf.str = "read filelist";// ERROR  cannot asignmet a data array like this; just can initailize when define a variable
-	write(sock,sendbuf	,sizeof(sendbuf));
-            printf("send is= %s",sendbuf.str);
+	write(sock,&sendbuf	,sizeof(sendbuf));
+            printf("send is= %s",&sendbuf.str);
 	printf("type cmd is= %d",sendbuf.cmd_type);
        // read(sock,recvbuf ,sizeof(recvbuf));
 		//fputs(recvbuf,stdout);
 		//memset(recvbuf,0,sizeof(recvbuf));//这两句主要所清空缓冲区，否则第一次输入长的，后面短到，会发生问题，第二次后面部分保留第一次输入到数据
 		//memset(sendbuf,0,sizeof(sendbuf));
-	}
+//	}
 	close(sock);
 	
 	}
