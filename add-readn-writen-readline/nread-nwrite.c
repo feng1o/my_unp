@@ -118,7 +118,10 @@ ssize_t readline(int sockefd,void *buf,size_t maxline)
             exit(EXIT_FAILURE);
         nleft -= nread;
         ret = readn(sockfd,bufp,nread);
+		if(ret!=nread)
+			exit(EXIT_FAILURE);
+		bufp += nread;
 
     }
-
+	return -1;
 }
