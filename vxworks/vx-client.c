@@ -50,7 +50,7 @@ int main(void ){
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(5188);
 	//servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	servaddr.sin_addr.s_addr = inet_addr("192,168.1.46");
 	
 	if(connect(sock,(struct sockadd *)&servaddr,sizeof(servaddr))<0)
 		ERR_EXIT("connect");//链接失败
