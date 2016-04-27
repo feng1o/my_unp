@@ -8,6 +8,7 @@
 
 #define MAXLINE 4096
 
+void str_get(FILE* fp, int sockfd);
 void str_client(int);
 
 int main()
@@ -17,14 +18,26 @@ int main()
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     memset(&serveraddr, 0, sizeof(serveraddr));
 
-    inet_aton("127.0.0.1", &(serveraddr.sin_addr)); 
+    inet_aton("127.0.0.3", &(serveraddr.sin_addr)); 
     serveraddr.sin_port = htons(6666); 
     serveraddr.sin_family = AF_INET;
 
     connect(sockfd, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
-
-    str_client(sockfd);
+    str_get(stdin, sockfd);
+//    str_client(sockfd);
     return 0;
+}
+
+void str_get(FILE* fp, int sockfd){
+    char sendline[MAXLINE], recvline[MAXLINE];
+    while(fgets(sendline, MAXLINE, fp) != NULL)
+    {
+        write(sockfd, sendline, MAXLINE);    
+        //fflush(stdin);
+        puts("send.......");
+        read(sockfd, recvline, MAXLINE);
+        fputs(recvline, stdout);
+    }
 }
 
 void str_client(int fd)

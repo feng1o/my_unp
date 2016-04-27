@@ -15,8 +15,9 @@ int main()
     int  listenfd, connfd;
     pid_t childpid;
     socklen_t clilen;
+    int   peerlen;
 
-    struct sockaddr_in   clientaddr, serveraddr;
+    struct sockaddr_in   clientaddr, serveraddr, perrsock2;
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -31,6 +32,13 @@ int main()
     for(;;){
         clilen = sizeof(clientaddr);
         connfd = accept(listenfd, (struct sockaddr*)&clientaddr, &clilen);
+        printf("client addr is.... %s\n", inet_ntoa(clientaddr.sin_addr));
+        printf("client prot is.... %d\n", ntohs(clientaddr.sin_port));
+        peerlen = sizeof(perrsock2);
+        //getpeername(connfd, &perrsock2, (socklen_t*)&peerlen);
+        getpeername(connfd, (struct sockaddr*)&perrsock2, NULL);
+        printf("server addr is.... %s\n", inet_ntoa(perrsock2.sin_addr));
+        printf("server prot is.... %d\n", ntohs(perrsock2.sin_port));
         if( -1 == connfd )
             perror("accept errror \n");
         childpid = fork();
@@ -46,17 +54,41 @@ int main()
     return 0;
 }
 
+void writen2(int fd, char* buf, int len)
+{
+    int readn;
+    int nleft = len;
+    while(nleft > 0)
+    {
+        readn = write( fd, buf, nleft );
+        if(readn == 0){
+            printf("read over \n");
+            return ;
+        }
+        if(readn < 0 && errno == EINTR)
+            readn = 0;
+        
+            nleft -= readn;
+            buf += readn;
+            
+    }
+}
+
 void str_echo(int fd){
     char buf[MAXLINE];
     ssize_t  readn;
 
 again:
 
-    while((readn = read(fd, buf, MAXLINE)) > 0)
-        Writen(fd, buf, readn);
+    while((readn = read(fd, buf, MAXLINE)) > 0){
+        writen2(fd, buf, readn);
     if( readn<0 && errno == EINTR )
         goto again;
     else if(readn<0)
+    {
         perror("read error\n");
+        return ;
+    }
      printf("read over ===%s \n", buf); 
+}
 }
