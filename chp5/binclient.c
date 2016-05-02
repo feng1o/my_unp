@@ -1,5 +1,11 @@
 #include"unistd.h"
-#include"../lib/error.c"
+//#include"../lib/error.c"
+#include"../tcpcliserv/sum.h"
+
+#include"../wrapfun.h"
+#include"../lib/writen.c"
+#include"../lib/readn.c"
+
 #include"sys/socket.h"
 #include"netinet/in.h"
 #include"stdio.h"
@@ -9,10 +15,31 @@
 #include"errno.h" 
 #define MAXLINE 4096
 
+void str_cli(FILE *fp, int sockfd)
+{
+	char			sendline[MAXLINE];
+	struct args		args;
+	struct result	result;
+
+	while (Fgets(sendline, MAXLINE, fp) != NULL) {
+
+		if (sscanf(sendline, "%ld%ld", &args.arg1, &args.arg2) != 2) {
+			printf("invalid input: %s", sendline);
+			continue;
+		}
+		Writen(sockfd, &args, sizeof(args));
+
+		if (Readn(sockfd, &result, sizeof(result)) == 0)
+			err_quit("str_cli: server terminated prematurely");
+
+		printf("%ld\n", result.sum);
+	}
+}
+
 void str_get(FILE* fp, int sockfd);
 void str_client(int);
 
-void str_cli(FILE *fp, int sockfd);
+void str_cli2(FILE *fp, int sockfd);
 
 int main()
 {
@@ -27,10 +54,14 @@ int main()
 
     connect(sockfd, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
     str_cli(stdin, sockfd);
+    //str_cli(stdin, sockfd);
 //    str_get(stdin, sockfd);
 //    str_client(sockfd);
     return 0;
 }
+
+
+
 
 void str_get(FILE* fp, int sockfd){
     char sendline[MAXLINE], recvline[MAXLINE];
@@ -68,7 +99,7 @@ int  writen2(int fd, char* buf, int n){
     return  n;
 }
 
-void str_cli(FILE *fp, int sockfd)
+void str_cli2(FILE *fp, int sockfd)
 {
 	char	sendline[MAXLINE], recvline[MAXLINE];
 

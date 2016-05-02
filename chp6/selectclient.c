@@ -1,12 +1,15 @@
 #include"unistd.h"
-#include"../lib/error.c"
+#include"../wrapfun.h"
 #include"sys/socket.h"
+#include"../lib/writen.c"
+#include"../lib/readline.c"
 #include"netinet/in.h"
 #include"stdio.h"
 #include"stdlib.h"
 #include"string.h"
 #include"arpa/inet.h"
 #include"errno.h" 
+#include"sys/select.h"
 #define MAXLINE 4096
 
 void str_get(FILE* fp, int sockfd);
@@ -32,6 +35,33 @@ int main()
     return 0;
 }
 
+void str_cli(FILE *fp, int sockfd)
+{
+	int			maxfdp1;
+	fd_set		rset;
+	char		sendline[MAXLINE], recvline[MAXLINE];
+
+	FD_ZERO(&rset);
+	for ( ; ; ) {
+		FD_SET(fileno(fp), &rset);
+		FD_SET(sockfd, &rset);
+		maxfdp1 = max(fileno(fp), sockfd) + 1;
+		Select(maxfdp1, &rset, NULL, NULL, NULL);
+
+		if (FD_ISSET(sockfd, &rset)) {	/* socket is readable */
+            printf("fd_isset sockfd =%d ,number is = %d \n",sockfd,FD_ISSET(sockfd, &rset));
+			if (Readline(sockfd, recvline, MAXLINE) == 0)
+				err_quit("str_cli: server terminated prematurely");
+			Fputs(recvline, stdout);
+		}
+
+		if (FD_ISSET(fileno(fp), &rset)) {  /* input is readable */
+			if (Fgets(sendline, MAXLINE, fp) == NULL)
+				return;		/* all done */
+			Writen(sockfd, sendline, strlen(sendline));
+		}
+	}
+}
 void str_get(FILE* fp, int sockfd){
     char sendline[MAXLINE], recvline[MAXLINE];
     while(fgets(sendline, MAXLINE, fp) != NULL)
@@ -68,7 +98,7 @@ int  writen2(int fd, char* buf, int n){
     return  n;
 }
 
-void str_cli(FILE *fp, int sockfd)
+void str_cli222(FILE *fp, int sockfd)
 {
 	char	sendline[MAXLINE], recvline[MAXLINE];
 

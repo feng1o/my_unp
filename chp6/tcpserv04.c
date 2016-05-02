@@ -1,4 +1,8 @@
 #include	"../lib/unp.h"
+#include "signal.h"
+#include "../wrapfun.h"
+
+#include "../tcpcliserv/sigchldwaitpid.c"
 
 int main(int argc, char **argv)
 {

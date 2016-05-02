@@ -6,6 +6,7 @@
 #include"netinet/in.h"
 #include"../lib/unp.h"
 #include"../lib/readn.c"
+#include"../tcpcliserv/sum.h"
 
 #include"../lib/error.c"
 #include"../lib/writen.c"
@@ -14,8 +15,23 @@
 #define def_SERV_PORT 6666
 #define MAXLINE 4096
 
+void str_echo(int sockfd)
+{
+	ssize_t			n;
+	struct args		args;
+	struct result	result;
+
+	for ( ; ; ) {
+		if ( (n = Readn(sockfd, &args, sizeof(args))) == 0)
+			return;		/* connection closed by other end */
+        printf("..read is:..%d..%d\n", args.arg1, args.arg2);
+		result.sum = args.arg1 + args.arg2;
+		Writen(sockfd, &result, sizeof(result));
+	}
+}
+
 void str_echo2(int sockfd);
-void str_echo(int );
+void str_echo1(int );
 int main()
 {
     int  listenfd, connfd;
@@ -52,7 +68,7 @@ int main()
             close(listenfd);
             printf("new connect pid=%d\n", getpid());
             //str_echo(connfd);
-            str_echo2(connfd);
+            str_echo(connfd);
             exit (0);
         }
         printf("goto  father process\n");
@@ -81,7 +97,7 @@ void writen2(int fd, char* buf, int len)
     }
 }
 
-void str_echo(int fd){
+void str_echo1(int fd){
     char buf[MAXLINE];
     ssize_t  readn;
 

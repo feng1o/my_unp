@@ -1,7 +1,6 @@
 #include	"unp.h"
 
-void
-str_echo(int sockfd)
+void str_echo(int sockfd)
 {
 	long		arg1, arg2;
 	ssize_t		n;
