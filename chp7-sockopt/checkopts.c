@@ -3,21 +3,17 @@
 #include	"../lib/unp.h"
 #include	<netinet/tcp.h>		/* for TCP_xxx defines */
 #include "../lib/error.c"
-
 #include "../lib/wrapsock.c"
-
 union val {
   int				i_val;
   long				l_val;
   struct linger		linger_val;
   struct timeval	timeval_val;
 } val;
-
 static char	*sock_str_flag(union val *, int);
 static char	*sock_str_int(union val *, int);
 static char	*sock_str_linger(union val *, int);
 static char	*sock_str_timeval(union val *, int);
-
 struct sock_opts {
   const char	   *opt_str;
   int		opt_level;
@@ -88,14 +84,12 @@ struct sock_opts {
 };
 /* *INDENT-ON* */
 /* end checkopts1 */
-
 /* include checkopts2 */
 int main(int argc, char **argv)
 {
 	int					fd;
 	socklen_t			len;
 	struct sock_opts	*ptr;
-
 	for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
 		printf("%s: ", ptr->opt_str);
 		if (ptr->opt_val_str == NULL)
@@ -120,7 +114,6 @@ int main(int argc, char **argv)
 			default:
 				err_quit("Can't create fd for level %d\n", ptr->opt_level);
 			}
-
 			len = sizeof(val);
 			if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
 						   &val, &len) == -1) {
@@ -134,10 +127,8 @@ int main(int argc, char **argv)
 	exit(0);
 }
 /* end checkopts2 */
-
 /* include checkopts3 */
 static char	strres[128];
-
 static char	* sock_str_flag(union val *ptr, int len)
 {
 /* *INDENT-OFF* */
@@ -150,7 +141,6 @@ static char	* sock_str_flag(union val *ptr, int len)
 /* *INDENT-ON* */
 }
 /* end checkopts3 */
-
 static char	* sock_str_int(union val *ptr, int len)
 {
 	if (len != sizeof(int))
@@ -159,11 +149,9 @@ static char	* sock_str_int(union val *ptr, int len)
 		snprintf(strres, sizeof(strres), "%d", ptr->i_val);
 	return(strres);
 }
-
 static char	* sock_str_linger(union val *ptr, int len)
 {
 	struct linger	*lptr = &ptr->linger_val;
-
 	if (len != sizeof(struct linger))
 		snprintf(strres, sizeof(strres),
 				 "size (%d) not sizeof(struct linger)", len);
@@ -172,11 +160,9 @@ static char	* sock_str_linger(union val *ptr, int len)
 				 lptr->l_onoff, lptr->l_linger);
 	return(strres);
 }
-
 static char	* sock_str_timeval(union val *ptr, int len)
 {
 	struct timeval	*tvptr = &ptr->timeval_val;
-
 	if (len != sizeof(struct timeval))
 		snprintf(strres, sizeof(strres),
 				 "size (%d) not sizeof(struct timeval)", len);
