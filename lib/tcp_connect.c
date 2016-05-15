@@ -1,8 +1,6 @@
-/* include tcp_connect */
 #include	"unp.h"
 
-int
-tcp_connect(const char *host, const char *serv)
+int tcp_connect(const char *host, const char *serv)
 {
 	int				sockfd, n;
 	struct addrinfo	hints, *res, *ressave;
@@ -24,7 +22,7 @@ tcp_connect(const char *host, const char *serv)
 		if (connect(sockfd, res->ai_addr, res->ai_addrlen) == 0)
 			break;		/* success */
 
-		Close(sockfd);	/* ignore this one */
+		close(sockfd);	/* ignore this one */
 	} while ( (res = res->ai_next) != NULL);
 
 	if (res == NULL)	/* errno set from final connect() */
@@ -42,8 +40,7 @@ tcp_connect(const char *host, const char *serv)
  * a Tcp_connect() function.
  */
 
-int
-Tcp_connect(const char *host, const char *serv)
+int Tcp_connect(const char *host, const char *serv)
 {
 	return(tcp_connect(host, serv));
 }
