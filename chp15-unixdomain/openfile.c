@@ -1,5 +1,33 @@
-/* include write_fd */
-#include	"unp.h"
+#include	"../lib/unp.h"
+#include"../lib/wrapsock.c"
+#include"../lib/wrapunix.c"
+#include"../lib/wrapstdio.c"
+#include"../lib/signal.c"
+#include"../lib/str_echo.c"
+#include"../lib/str_cli.c"
+
+#include"../lib/writen.c"
+#include"../lib/wraplib.c"
+#include"../lib/error.c"
+#include"../lib/readline.c"
+
+ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd);
+
+int main(int argc, char **argv)
+{
+	int		fd;
+
+	if (argc != 4)
+		err_quit("openfile <sockfd#> <filename> <mode>");
+
+	if ( (fd = open(argv[2], atoi(argv[3]))) < 0)
+		exit( (errno > 0) ? errno : 255 );
+
+	if (write_fd(atoi(argv[1]), "", 1, fd) < 0)
+		exit( (errno > 0) ? errno : 255 );
+
+	exit(0);
+}
 
 ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 {

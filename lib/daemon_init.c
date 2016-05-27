@@ -5,8 +5,7 @@
 
 extern int	daemon_proc;	/* defined in error.c */
 
-int
-daemon_init(const char *pname, int facility)
+int daemon_init(const char *pname, int facility)
 {
 	int		i;
 	pid_t	pid;
@@ -25,7 +24,7 @@ daemon_init(const char *pname, int facility)
 	if ( (pid = Fork()) < 0)
 		return (-1);
 	else if (pid)
-		_exit(0);			/* child 1 terminates */
+		_exit(-1);			/* child 1 terminates */
 
 	/* child 2 continues... */
 

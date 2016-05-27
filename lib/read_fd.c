@@ -1,8 +1,7 @@
 /* include read_fd */
 #include	"unp.h"
 
-ssize_t
-read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
+ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 {
 	struct msghdr	msg;
 	struct iovec	iov[1];
