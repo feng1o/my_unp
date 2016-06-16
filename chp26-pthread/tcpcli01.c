@@ -9,7 +9,6 @@ main(int argc, char **argv)
 		err_quit("usage: tcpcli <hostname> <service>");
 
 	sockfd = Tcp_connect(argv[1], argv[2]);
-
 	str_cli(stdin, sockfd);		/* do it all */
 
 	exit(0);

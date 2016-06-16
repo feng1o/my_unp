@@ -1,13 +1,16 @@
-#include	"unpthread.h"
+#include	"../lib/unpthread.h"
+#include"../lib/wrappthread.c"
+#include"pthread.h"
+#include"../lib/error.c"
 
 #define	NLOOP 5000
 
-int				counter;		/* incremented by threads */
+int				counter;		/* incremented by threads */ 
+pthread_mutex_t	counter_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void	*doit(void *);
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	pthread_t	tidA, tidB;
 
@@ -21,8 +24,7 @@ main(int argc, char **argv)
 	exit(0);
 }
 
-void *
-doit(void *vptr)
+void * doit(void *vptr)
 {
 	int		i, val;
 
@@ -32,9 +34,13 @@ doit(void *vptr)
 	 */
 
 	for (i = 0; i < NLOOP; i++) {
+		Pthread_mutex_lock(&counter_mutex);
+
 		val = counter;
 		printf("%d: %d\n", pthread_self(), val + 1);
 		counter = val + 1;
+
+		Pthread_mutex_unlock(&counter_mutex);
 	}
 
 	return(NULL);

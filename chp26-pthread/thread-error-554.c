@@ -1,12 +1,10 @@
 #include	"../lib/unpthread.h"
 #include"../lib/wrappthread.c"
 #include"pthread.h"
-#include"../lib/error.c"
 
 #define	NLOOP 5000
 
 int				counter;		/* incremented by threads */
-pthread_mutex_t	counter_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void	*doit(void *);
 
@@ -34,13 +32,9 @@ void * doit(void *vptr)
 	 */
 
 	for (i = 0; i < NLOOP; i++) {
-		Pthread_mutex_lock(&counter_mutex);
-
 		val = counter;
 		printf("%d: %d\n", pthread_self(), val + 1);
 		counter = val + 1;
-
-		Pthread_mutex_unlock(&counter_mutex);
 	}
 
 	return(NULL);
